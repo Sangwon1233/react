@@ -24,7 +24,7 @@ const List=()=>{
     <div>
       <button onClick={()=>navigate('/write')}>글쓰기</button>
       <ul>
-        {data.dtoList.map(b => <li key={b.bno}>{b.title}</li>)}
+        {data && data.map(b => <li key={b.bno}>{b.title}</li>)}
       </ul>
     </div>
   )
