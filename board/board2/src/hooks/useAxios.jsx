@@ -35,7 +35,7 @@ const useAxios = (baseUrl = BASE_URL) =>{
       }
       , [baseUrl, token]); //의존성 배열
 
-    return(data,loading,error,req);
+    return{data,loading,error,req};
     
 }
 export default useAxios;

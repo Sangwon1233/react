@@ -8,8 +8,8 @@ const LoginForm = () => {
 // state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const {error, req} = useAxios('http://localhost:8080/api/'); //비동기처리
- //data, loading, 
+  const {data, loading,error, req} = useAxios('http://localhost:8080/api/'); //비동기처리
+ // 
   // const navigate = useNavigate('dashboard');
   const {login} = useAuth();
 
