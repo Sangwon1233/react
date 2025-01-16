@@ -6,13 +6,18 @@ import { upload } from '@testing-library/user-event/dist/upload';
 const Write = () => {
   const {email} = useAuth();
   const [board, setBoard] = useState({title:'', content:'', writer:'', attachDtos:[]});
-  const [uploaded, setUploaded] = useState
+
   const navigate = useNavigate();
   const {req} = useAxios();
+  const [uploaded, setUploaded] = useState([]);
 
-  useEffect(()=>{
-    setBoard(prev => ({...prev,writer:email}))
-  }, [email]);
+    useEffect(()=>{
+    (async()=> {
+      const resp = await req('get', `notes/${num}`);
+      console.log(resp);
+
+    })();
+  }, [req, num]);
 
   const handleChange = e => {
     const {name, value} = e.target;
@@ -23,9 +28,9 @@ const Write = () => {
     e.preventDefault();
     console.log(board);
 
-    req('post', 'notes', {...board, attachDtos : uploaded});
+    req('put', `notes/{num}`, {...board, attachDtos : uploaded});
 
-  alert('글쓰기 성공');
+  alert('글수정 성공');
   navigate("/notes");
 
 
@@ -39,36 +44,39 @@ const handleFileUpload = async e => {
     setAttachArr(...AttachArr, files[i])
   }
 
-  try {
-    const result = await req('post', 'file/upload', formData, {'Content-Type':'multipart/form-data'});
-    console.log(result);
-    setUploaded([...uploaded, ...result]);
+    try {
+      const result = await req('post', 'file/upload', formData, {'Content-Type':'multipart/form-data'});
+      console.log(result);
+      setUploaded([...uploaded, ...result]);
 
 
+    }
+      catch(error) {
+        console.error("Error during upload:", error);
+      }
+
+      e.target.value = '';
   }
-  catch(error) {
-    console.error("Error during upload:", error);
-  }
-
-  e.target.value = '';
-}
 
   // const inputFile -;
 
   return (
     <div>
-      <h1>Write</h1>
+      <h1>Modify</h1>
       <form onSubmit={handleSubmit}>
         <input name='title' value={board.title} onChange={handleChange} />
         <input name='content' value={board.content} onChange={handleChange} />
-        <input name='memberEmail' value={board.memberEmail}onChange={handleChange}/>
-        <button>글쓰기</button>
+        <input name='memberEmail' value={board.writer} onChange={handleChange} readOnly/>
+        <div>
+          <h3>attachs : {board.attachDtos.length}</h3>
+          <ul>
+            {board.attachDtos.map(a => <li key={a.uuid}><Link to={a.url}>{a.origin}</Link></li>)}
+          </ul>
+        </div>
+        <button data-uuid={u.uuid} onClick={e => setUploaded( uploaded.filter(file => file.uuid !== e.currentTarget.dataset.uuid))}>글수정</button>
       </form>
-      <ul>
-        {uploaded.map(u => <li key={u.uuid}><Link to={u.url}>{u.origin}</Link><button data-uuid={u.uuid} onClick={e => setUploaded( uploaded.filter(file => file.uuid !== e.currentTarget.dataset.uuid))}>삭제</button></li>)}
-      </ul>
     </div>
   );
-  }
+}
 
-export default Write;
+export default Modify;
